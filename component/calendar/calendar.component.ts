@@ -15,29 +15,38 @@ export class CalendarComponent implements OnInit {
   @Input() startDate: Date|null = null;
   @Input() endDate: Date|null = null;
   @Input() reservations: any[] = [];
+  @Input() userId: number = 0;
 
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
 
     this.initMonth(this.currentDate);
-    this.setReservations();
+    this.setPreviousSelection();
   }
 
 
   book(): void {
-    this.activeModal.close({ startDate: this.startDate, endDate: this.endDate});
+    this.activeModal.close({startDate: this.startDate, endDate: this.endDate});
   }
 
+  borrow() {
+    this.activeModal.close({startDate: this.startDate, endDate: this.endDate, owner: 'api/users/' + this.userId});
+  }
 
-  setReservations() {
+  setPreviousSelection() {
     let _reservations = this.reservations.map(element => (
         {
           ...element,
           startDate : new Date(element.startDate),
-          endDate: new Date(element.endDate)
+          endDate: element.backDate ? new Date(element.backDate) : new Date(element.endDate)
         }
     ))
+    if(this.userId) {
+      // les reservation de l'utilisateur courant ne sont pas visible
+      // l'objet emprunté est visible
+      _reservations = _reservations.filter((elem:any) => elem.owner.id !== this.userId || elem.state === 1 || elem.state === 2);
+    }
     _reservations.forEach((reservation: any) => {
       this.month.forEach((week: any, i: number) => {
         week.forEach((date: any, j: number) => {
@@ -45,7 +54,9 @@ export class CalendarComponent implements OnInit {
           let momentEndDate = moment(reservation.endDate);
           let momentDate = moment(date.date);
           if(momentStartDate.isSameOrBefore(momentDate, 'day') && momentEndDate.isSameOrAfter(momentDate, 'day')) {
-            this.month[i][j].blocked = true;
+            if(!reservation.state) this.month[i][j].blocked = true;
+            if(reservation.state == 1) this.month[i][j].out = true;
+            if(reservation.state == 2) this.month[i][j].back = true;
           }
           if(momentStartDate.isSame(momentDate, 'day')) {
             this.month[i][j].start = true;
@@ -56,7 +67,6 @@ export class CalendarComponent implements OnInit {
         })
       })
     })
-    console.log( this.month);
   }
 
   initMonth(date: Date ) {
@@ -96,7 +106,7 @@ export class CalendarComponent implements OnInit {
     })
 
     this.month = month;
-    this.setSelected();
+    this.setCurrentSelection();
 
   }
 
@@ -145,23 +155,28 @@ export class CalendarComponent implements OnInit {
 
   addYear() {
     this.initMonth(this.currentDate = moment(this.currentDate).add(1, 'year').toDate());
-    this.setReservations();
+    this.setPreviousSelection();
   }
 
   removeYear() {
     this.initMonth(this.currentDate = moment(this.currentDate).add(-1, 'year').toDate());
-    this.setReservations();
+    this.setPreviousSelection();
   }
 
   setMonth(number: number ): void {
     let currentMonth = this._date(this.currentDate, 0).month;
     let deltaMonth = number - currentMonth;
     this.initMonth(this.currentDate = moment(this.currentDate).add(deltaMonth, 'month').toDate());
-    this.setReservations();
+    this.setPreviousSelection();
   }
 
   selectDay($event: MouseEvent, date: any, i:number, j:number) {
-    if(this.month[i][j].blocked) {
+    if(this.month[i][j].blocked || this.month[i][j].out || this.month[i][j].back) {
+      return;
+    }
+    let _calendarMomentDate = moment(date.date);
+    let _now = moment();
+    if(_calendarMomentDate.isBefore(_now, 'day')) {
       return;
     }
     switch(this.click) {
@@ -175,20 +190,20 @@ export class CalendarComponent implements OnInit {
     }
     if(this.click == 1) {
       this.startDate = date.date;
-      this.setSelected();
+      this.setCurrentSelection();
     }
     if(this.click == 2) {
       this.endDate = date.date;
-      this.setSelected();
+      this.setCurrentSelection();
     }
     if(this.click == 0) {
       this.startDate = null;
       this.endDate = null;
-      this.setSelected();
+      this.setCurrentSelection();
     }
   }
 
-  setSelected() {
+  setCurrentSelection() {
     if(this.startDate && this.endDate) {
       this.month.forEach((week: any, i: number) => {
         week.forEach((day: any, j:number) => {
@@ -227,4 +242,6 @@ export class CalendarComponent implements OnInit {
       })
     }
   }
+
+
 }

@@ -4,7 +4,7 @@ import {SubscribeComponent} from "../../component/subscribe/subscribe.component"
 import {DomSanitizer} from "@angular/platform-browser";
 import {tap} from "rxjs";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-file-upload',
@@ -39,7 +39,7 @@ export class FileUploadComponent extends SubscribeComponent implements OnInit, C
   onTouchCVA: any = () => {};
 
   ngOnInit(): void {
-    this.dtk = Date.now();
+
   }
 
   writeValue(obj: any) {

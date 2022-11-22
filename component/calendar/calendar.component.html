@@ -38,13 +38,18 @@
               'green' : date.today,
               'yellow' : date.selected,
               'red' : date.blocked,
+              'orange' : date.out,
+              'purple' : date.back,
               'cornerLeft' : date.start || date.startSelected,
               'cornerRight': date.end || date.endSelected
               }" class="day"> {{ date.d}}</span>
       </div>
     </div>
 
-    <div class="book">
+    <div class="book" *ngIf="!userId">
       <button (click)="book()" class="btn btn-primary">Réserver</button>
+    </div>
+    <div class="borrow" *ngIf="userId">
+      <button (click)="borrow()" class="btn btn-primary">Réserver</button>
     </div>
   </div>
