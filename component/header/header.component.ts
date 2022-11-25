@@ -4,6 +4,7 @@ import {selectFeatureLogged} from "../../selectors/logged-selector";
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {login, logout} from "../../actions/login-action";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
   constructor(
     private store: Store<{logged: boolean}>,
     private http: HttpClient,
+    private router: Router
   ) {
     super();
   }
@@ -34,6 +36,8 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
         } else {
           this.store.dispatch(logout());
         }
+      }, (error) => {
+        this.router.navigate(['login']);
       })
     );
 

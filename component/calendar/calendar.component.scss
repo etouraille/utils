@@ -1,8 +1,8 @@
 
 .calendar-base {
-  width: 700px;
+  width: 580px;
   height: 500px;
-  border-radius: 20px;
+  border-radius: 5px;
   background-color: white;
   position: relative;
   z-index: 2;
@@ -76,7 +76,7 @@
   color: #AAAAAA;
   position: relative;
   font-size: 18px;
-  left: 162px;
+  left: 33px;
   top: 80px;
   word-spacing: 35px;
   font-weight: 600;
@@ -266,3 +266,48 @@
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+.book {
+  position: relative;
+  left: 455px;
+  top: 100px;
+}
+@media(screen and max-width: 401px) {
+  .calendar-base {
+    width: 300px;
+    height: 700px;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+    z-index: 2;
+    color: black;
+  }
+
+  .months {
+    word-spacing: 10px;
+    left: 30px;
+  }
+
+
+  .days {
+    word-spacing: 2px;
+  }
+
+  .num-dates {
+    top: 110px;
+    right: -40px;
+    z-index: 3;
+    width: 315px;
+  }
+
+  .day {
+    width: 45px;
+  }
+
+  .book {
+    position: relative;
+    left: 240px;
+  }
+
+}
+
+

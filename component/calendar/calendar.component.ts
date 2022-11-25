@@ -93,7 +93,7 @@ export class CalendarComponent implements OnInit {
     days.forEach((_date: any , index) => {
 
       _date = Object.assign({today: this.equal(_date, _dayZero),
-        outside: _dayZero.month !== _date.month }, _date, { d: _date.d < 10 ? '0' + _date.d: _date.d});
+        outside: this.currentDay.month !== _date.month }, _date, { d: _date.d < 10 ? '0' + _date.d: _date.d});
 
       if(currentWeek === _date.w) {
         week.push(_date);
