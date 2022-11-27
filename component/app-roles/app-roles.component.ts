@@ -22,6 +22,7 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
 
   user: boolean = false;
   admin: boolean = false;
+  member: boolean = false;
 
   toggle(event: any) {
     this.show = !this.show;
@@ -39,12 +40,18 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
   }
 
   writeValue(roles: string[]) {
-    this._roles = roles;
-    if(roles.includes('ROLE_USER')) {
-      this.user = true;
-    }
-    if(roles.includes('ROLE_ADMIN')) {
-      this.admin = true;
+    if(roles) {
+      this._roles = roles;
+      if (roles.includes('ROLE_USER')) {
+        this.user = true;
+      }
+      if (roles.includes('ROLE_MEMBER')) {
+        this.member = true;
+      }
+
+      if (roles.includes('ROLE_ADMIN')) {
+        this.admin = true;
+      }
     }
   }
 
@@ -80,4 +87,15 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
     }
   }
 
+  changeMember() {
+    if(this.member) {
+      this._roles.push('ROLE_MEMBER')
+    } else {
+      let index = this._roles.indexOf('ROLE_MEMBER');
+      if( index > -1) {
+        this._roles.splice(index, 1);
+      }
+      this.onChange(this._roles);
+    }
+  }
 }

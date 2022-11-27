@@ -18,10 +18,13 @@ export class SearchComponent implements OnInit {
 
   @Input() user : any = null;
   @Input() things : any[] = [];
+  @Input() all: boolean = false;
 
   @Output() onChangeId: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor(private http: HttpClient  ) { }
+  constructor(private http: HttpClient  ) {
+
+  }
 
   isReserved(reservation: any) : boolean {
     let _startDate = moment(reservation.startDate);
@@ -34,7 +37,7 @@ export class SearchComponent implements OnInit {
       condition = !reservation.state && reservation.owner.id !== this.user.id
     }
 
-    return (reservation.state == 1 || !reservation.state)
+    return (reservation.state == 1 || condition)
       && _now.isSameOrAfter(_startDate, 'day')
       && _now.isSameOrBefore(_endDate, 'day')
     ;
@@ -52,9 +55,6 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     // @ts-ignore
-
-
-
     this.myControl.valueChanges
       // @ts-ignore
       .subscribe((value:any) => {
@@ -65,10 +65,9 @@ export class SearchComponent implements OnInit {
               map((data: any) => {
                 // on ne prends que ceux disponible.
                 // cad que ceux qui ne sont pas out à la date courante
-                return data
+                return this.all ? data : data
                   .filter((elem:any) => !this.things.map(elem => elem.id).includes(elem.id))
                   .filter((elem: any) => elem.reservations.length === 0 || !this.includeReserved(elem.reservations))
-                return data;
               })
             )
             .subscribe((response : any)  => {

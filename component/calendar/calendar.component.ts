@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as moment from 'moment';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
@@ -16,6 +17,7 @@ export class CalendarComponent implements OnInit {
   @Input() endDate: Date|null = null;
   @Input() reservations: any[] = [];
   @Input() userId: number = 0;
+  @Input() _borrow: boolean = false;
 
   constructor(public activeModal: NgbActiveModal) { }
 
@@ -42,7 +44,7 @@ export class CalendarComponent implements OnInit {
           endDate: element.backDate ? new Date(element.backDate) : new Date(element.endDate)
         }
     ))
-    if(this.userId) {
+    if(this.userId && this._borrow) {
       // les reservation de l'utilisateur courant ne sont pas visible
       // l'objet emprunté est visible
       _reservations = _reservations.filter((elem:any) => elem.owner.id !== this.userId || elem.state === 1 || elem.state === 2);
@@ -57,6 +59,7 @@ export class CalendarComponent implements OnInit {
             if(!reservation.state) this.month[i][j].blocked = true;
             if(reservation.state == 1) this.month[i][j].out = true;
             if(reservation.state == 2) this.month[i][j].back = true;
+            this.month[i][j].email = reservation.owner.email;
           }
           if(momentStartDate.isSame(momentDate, 'day')) {
             this.month[i][j].start = true;
