@@ -4,11 +4,17 @@ import {HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from "@angular/
 import {finalize, tap} from "rxjs";
 import {environment} from "../../environments/environment";
 import {publicRoutesService} from "../service/publicRoutes.service";
+import {Store} from "@ngrx/store";
+import {logout} from "../actions/login-action";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private service : StorageService,private routeService: publicRoutesService) {}
+  constructor(
+    private service : StorageService,
+    private routeService: publicRoutesService,
+    private store: Store<{ logged: boolean}>
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     // Get the auth token from the service.
@@ -41,8 +47,9 @@ export class AuthInterceptor implements HttpInterceptor {
           error: (error) => { ok = 'failed'; console.log(error) }
         }),
         tap((event:any) => {
-          console.log(event);
-          //TODO unlog event, and ngrx to lib.
+          if(event.status === 401) {
+            this.store.dispatch(logout());
+          }
         }),
         // Log when response observable either completes or errors
         finalize(() => {

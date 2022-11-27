@@ -28,18 +28,10 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
     this.add(this.store.select((state:any) => state.login.logged).subscribe(data => {
         this.logged = data;
     }));
-    this.add(
-      this.http.get('api/ping').subscribe((data:any) => {
-        if(data.email) {
-          this.email = data.email;
-          this.store.dispatch(login());
-        } else {
-          this.store.dispatch(logout());
-        }
-      }, (error) => {
-        this.router.navigate(['login']);
-      })
-    );
+    this.add(this.store.select((state:any) => state.login.user).subscribe(data => {
+      this.email = data?.email;
+    }));
+
 
   }
 
