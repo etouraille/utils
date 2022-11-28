@@ -6,4 +6,5 @@
 .navbar .dropdown-menu {
   position: absolute !important;
   left: -50px;
+  z-index: 10000;
 }

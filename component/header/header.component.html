@@ -4,12 +4,12 @@
     <li *ngIf="!logged" class="m-1"><a class="btn btn-secondary" routerLink="/subscribe">Subscribe</a></li>
     <li *ngIf="!logged" class="m-1"><a class="btn btn-secondary" routerLink="/login">Login</a></li>
     <li *ngIf="logged"  class="m-1" ngbDropdown #drop="ngbDropdown">
-      <a class="nav-link" ngbDropdownToggle href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="nav-link" ngbDropdownToggle id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ email }}
       </a>
       <div ngbDropdownMenu="navbarDropdownMenuLink" class="" aria-labelledby="navbarDropdownMenuLink">
         <a ngbDropdownItem  href="#" [routerLink]="['income']">Revenus</a>
-        <a ngbDropdownItem  href="#">Another action</a>
+        <a ngbDropdownItem  href="#" [routerLink]="['card']">Compléter une carte</a>
         <a ngbDropdownItem  href="#">Something else here</a>
       </div>
     </li>
