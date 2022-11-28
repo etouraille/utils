@@ -33,11 +33,15 @@ export class SearchComponent implements OnInit {
 
     // if user is defined
     let condition = !reservation.state;
+    let condition2 = reservation.state === 1;
+    let condition3 = reservation.state === 2;
     if(this.user) {
-      condition = !reservation.state && reservation.owner.id !== this.user.id
+      condition = !reservation.state && reservation.owner.id !== this.user.id;
+      condition2 = reservation.state === 1 && reservation.owner.id !== this.user.id;
+      condition3 = reservation.state === 2 && reservation.owner.id !== this.user.id;
     }
 
-    return (reservation.state == 1 || condition)
+    return (condition2 || condition || condition3 )
       && _now.isSameOrAfter(_startDate, 'day')
       && _now.isSameOrBefore(_endDate, 'day')
     ;
