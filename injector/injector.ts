@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
     // Clone the request and replace the original headers with
     // cloned headers, updated with the authorization.
     const authReq = req.clone({
-      url: environment.api + req.url,
+      url: req.url.match(new RegExp('upload')) ? req.url : environment.api + req.url,
       headers: headers,
     });
 
@@ -44,11 +44,10 @@ export class AuthInterceptor implements HttpInterceptor {
           // Succeeds when there is a response; ignore other events
           next: (event) => (ok = event instanceof HttpResponse ? 'succeeded' : ''),
           // Operation failed; error is an HttpErrorResponse
-          error: (error) => { ok = 'failed'; console.log(error) }
-        }),
-        tap((event:any) => {
-          if(event.status === 401) {
-            this.store.dispatch(logout());
+          error: (error) => { ok = 'failed'; console.log(error)
+            if(error.status === 401) {
+              this.store.dispatch(logout());
+            }
           }
         }),
         // Log when response observable either completes or errors

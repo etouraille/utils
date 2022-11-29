@@ -8,9 +8,11 @@
         {{ email }}
       </a>
       <div ngbDropdownMenu="navbarDropdownMenuLink" class="" aria-labelledby="navbarDropdownMenuLink">
-        <a ngbDropdownItem  href="#" [routerLink]="['income']">Revenus</a>
-        <a ngbDropdownItem  href="#" [routerLink]="['card']">Compléter une carte</a>
-        <a ngbDropdownItem  href="#">Something else here</a>
+        <a *ngIf="isMember" ngbDropdownItem   [routerLink]="['income']">Revenus</a>
+        <a ngbDropdownItem   [routerLink]="['card']">Compléter une carte</a>
+        <a *ngIf="isMember" ngbDropdownItem   [routerLink]="['coin']">Coin</a>
+        <a *ngIf="isMember" ngbDropdownItem   [routerLink]="['add']">Proposez un objet</a>
+        <a ngbDropdownItem  (click)="logout()">Déconnection</a>
       </div>
     </li>
   </ul>
