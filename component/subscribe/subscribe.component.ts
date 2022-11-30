@@ -17,7 +17,11 @@ export class SubscribeComponent implements OnDestroy{
 
   ngOnDestroy(): void {
     this.subs.forEach((sub: any) => {
-      sub.unsubscribe();
+      try {
+        sub.unsubscribe();
+      } catch(error) {
+        console.log( error);
+      }
     })
   }
 }
