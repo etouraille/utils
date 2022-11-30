@@ -21,16 +21,19 @@ export class AuthInterceptor implements HttpInterceptor {
     const authToken = 'Bearer ' + this.service.get('token');
 
     let headers = req.headers;
+    if( req.method === 'PATCH') {
+      headers = req.headers.set('content-type', 'application/merge-patch+json');
+    }
     if(-1 === this.routeService.get().findIndex(elem => {
       let regexp = new RegExp(elem);
       return !!(req.url.match(regexp))
     })) {
-      headers = req.headers.set('Authorization', authToken);
+      headers = headers.set('Authorization', authToken);
     }
     // Clone the request and replace the original headers with
     // cloned headers, updated with the authorization.
     const authReq = req.clone({
-      url: req.url.match(new RegExp('upload')) ? req.url : environment.api + req.url,
+      url: req.url.match(/\/upload/) ? req.url : environment.api + req.url,
       headers: headers,
     });
 

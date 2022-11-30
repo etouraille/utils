@@ -1,8 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {SubscribeComponent} from "../subscribe/subscribe.component";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-who',
@@ -11,8 +10,11 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class WhoComponent extends SubscribeComponent implements OnInit {
 
+  @Input() header: string = 'Pour quel utilisateur souhaitez vous emprunter un objet';
+
   myControl: FormControl = new FormControl<any>('');
   filteredOptions: any[] = [];
+
   displayFn(thing: any) {
     return thing.email;
   };
@@ -21,6 +23,7 @@ export class WhoComponent extends SubscribeComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
+    private elt:ElementRef,
 
   ) {
     super();
