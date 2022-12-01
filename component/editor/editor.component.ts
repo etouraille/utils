@@ -21,8 +21,10 @@ export class EditorComponent extends SubscribeComponent implements OnInit, Contr
 
   edit: boolean = false;
   model: any = {};
+  options: any[] = [];
   @Input() field: string = '';
   @Input() type: string = 'string';
+  @Input() api: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -32,6 +34,8 @@ export class EditorComponent extends SubscribeComponent implements OnInit, Contr
   }
   onChange = (value: any) => {};
   onTouched = (value: any) => {};
+  selected: any= '';
+
 
 
   ngOnInit(): void {
@@ -41,6 +45,17 @@ export class EditorComponent extends SubscribeComponent implements OnInit, Contr
       this.model = model;
       this.onChange(model)
     })
+    if(this.type === 'select' && this.api) {
+      this.add(this.http.get(this.api).subscribe((data: any) => {
+        this.options = data['hydra:member'];
+      }))
+    }
+  }
+
+  initSelected(): void {
+    if(this.type === 'select') {
+      this.selected = this.options.find(elem => elem['@id'] === this.model[this.field])?.name;
+    }
   }
 
   registerOnChange(fn: any) {
@@ -54,6 +69,7 @@ export class EditorComponent extends SubscribeComponent implements OnInit, Contr
     if(obj) {
       this.model = obj;
       this.form.patchValue({property: this.model[this.field]});
+      this.initSelected();
     }
   }
 
@@ -64,6 +80,7 @@ export class EditorComponent extends SubscribeComponent implements OnInit, Contr
     object[this.field] = this.type=='price' ? parseFloat(this.model[this.field]) : this.model[this.field];
     this.add(this.http.patch('api/things/' + this.model.id, object).subscribe((data) => {
       this.model = data;
+      this.initSelected();
     }));
   }
 }

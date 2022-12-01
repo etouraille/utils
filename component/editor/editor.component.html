@@ -1,12 +1,23 @@
 <div class="form-group" [formGroup]="form">
-  <div *ngIf="!edit && type!='pictures'" class="form-control">
+  <div *ngIf="!edit && type!='pictures' && type!='select'" class="form-control">
     {{ model[field] }}
     <button class="btn btn-primary" (click)="edit=true">Edit</button>
   </div>
-  <div *ngIf="edit && type!='pictures'">
+  <div *ngIf="edit && type!='pictures' && type!='select'">
     <input class="form-control" formControlName="property"/>
     <button class="btn btn-danger" (click)="save()">Save</button>
   </div>
+  <div *ngIf="!edit && type=='select'" class="form-control">
+    {{ selected }}
+    <button class="btn btn-primary" (click)="edit=true">Edit</button>
+  </div>
+  <div *ngIf="edit && type=='select'">
+    <select class="form-control" formControlName="property">
+      <option *ngFor="let option of options" value="{{ option['@id']}}">{{ option.name}}</option>
+    </select>
+    <button class="btn btn-danger" (click)="save()">Save</button>
+  </div>
+
   <div *ngIf="type=='pictures'">
     <app-pictures formControlName="property"></app-pictures>
     <button class="btn btn-danger" (click)="save()">Save</button>
