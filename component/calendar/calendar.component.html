@@ -46,10 +46,10 @@
     </div>
   </div>
 
-  <div class="book" *ngIf="!userId">
+  <div class="book" *ngIf="!userId && !readOnly">
     <button (click)="book()" class="btn btn-primary">Réserver</button>
   </div>
-  <div class="borrow" *ngIf="userId">
+  <div class="borrow" *ngIf="userId && !readOnly">
     <button (click)="borrow()" class="btn btn-primary">Emprunter</button>
   </div>
 </div>

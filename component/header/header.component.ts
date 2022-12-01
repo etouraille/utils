@@ -44,4 +44,8 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
     if(this.router.url === '/') this.store.dispatch(logout());
     this.router.navigate(['/']);
   }
+
+  selectThing($event: number) {
+    this.router.navigate(['thing/' + $event]);
+  }
 }

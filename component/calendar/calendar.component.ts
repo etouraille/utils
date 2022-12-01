@@ -18,6 +18,7 @@ export class CalendarComponent implements OnInit {
   @Input() reservations: any[] = [];
   @Input() userId: number = 0;
   @Input() _borrow: boolean = false;
+  @Input() readOnly: boolean = false;
 
   constructor(public activeModal: NgbActiveModal) { }
 
@@ -174,6 +175,9 @@ export class CalendarComponent implements OnInit {
   }
 
   selectDay($event: MouseEvent, date: any, i:number, j:number) {
+    if(this.readOnly) {
+      return;
+    }
     if(this.month[i][j].blocked || this.month[i][j].out || this.month[i][j].back) {
       return;
     }

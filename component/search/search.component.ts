@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
@@ -20,6 +20,7 @@ export class SearchComponent implements OnInit {
   @Input() things : any[] = [];
   @Input() all: boolean = false;
 
+  placeholder: string = 'Choisir un Objet';
   @Output() onChangeId: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private http: HttpClient  ) {
@@ -63,6 +64,7 @@ export class SearchComponent implements OnInit {
       // @ts-ignore
       .subscribe((value:any) => {
         if(value.length >= 1){
+
           this.http.get('api/things?name=' + value + '&description=' + value)
             .pipe(
               map((data:any ) => data['hydra:member']),

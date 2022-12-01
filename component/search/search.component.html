@@ -1,7 +1,7 @@
 <form class="example-form">
   <mat-form-field class="example-full-width">
-    <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto">
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelected($event)">
+    <input type="text" placeholder="{{ placeholder }}" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelected($event)" cdkConnectedOverlay>
       <mat-option *ngFor="let option of filteredOptions" [value]="option.id">
         <img class="icon" src="{{ 'http://localhost:3000/' + option?.pictures[0]?.picture}}" />{{option.name}}
       </mat-option>
