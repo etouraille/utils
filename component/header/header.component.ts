@@ -4,7 +4,7 @@ import {selectFeatureLogged} from "../../selectors/logged-selector";
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {login, logout} from "../../actions/login-action";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {StorageService} from "../../service/storage.service";
 
 @Component({
@@ -36,10 +36,12 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
     }));
 
 
+
   }
 
   logout() {
     this.service.set('token', null);
+    if(this.router.url === '/') this.store.dispatch(logout());
     this.router.navigate(['/']);
   }
 }
