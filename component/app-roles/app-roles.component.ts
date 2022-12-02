@@ -71,8 +71,8 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
       if( index > -1) {
         this._roles.splice(index, 1);
       }
-      this.onChange(this._roles);
     }
+    this.onChange(this._roles);
   }
 
   changeAdmin() {
@@ -83,8 +83,9 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
       if( index > -1) {
         this._roles.splice(index, 1);
       }
-      this.onChange(this._roles);
+
     }
+    this.onChange(this._roles);
   }
 
   changeMember() {
@@ -95,7 +96,7 @@ export class AppRolesComponent extends SubscribeComponent implements OnInit, Con
       if( index > -1) {
         this._roles.splice(index, 1);
       }
-      this.onChange(this._roles);
     }
+    this.onChange(this._roles);
   }
 }

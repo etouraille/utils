@@ -34,7 +34,6 @@ export class SwitchComponent implements ControlValueAccessor, OnInit {
   }
 
   onChangeState($event: any) {
-    console.log($event);
     this.onChange($event);
   }
 }
