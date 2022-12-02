@@ -5,6 +5,7 @@
 <div class="navbar navbar-expand-lg navbar-light bg-light">
   <div><app-search [all]="true" (onChangeId)="selectThing($event)"></app-search></div>
   <ul class="nav navbar-nav navbar-right float-end ms-auto">
+    <li class="m-1"><app-basket></app-basket></li>
     <li *ngIf="!logged" class="m-1"><a class="btn btn-secondary" routerLink="/subscribe">Subscribe</a></li>
     <li *ngIf="!logged" class="m-1"><a class="btn btn-secondary" routerLink="/login">Login</a></li>
     <li *ngIf="logged"  class="m-1" ngbDropdown #drop="ngbDropdown">
@@ -30,7 +31,7 @@
     <div>Vous pouvez être membres ou utilisateurs:</div>
     <ul>
       <li>les membres déposent leurs objets et les partagent avec une monaie d'échange.</li>
-      <li>Les utilisteurs louent des objets sans avoir besoin d'en déposer, et une partie de la recette est redistribuée en partie aux membres et permet de faire fonctionner le local.</li>
+      <li>Les utilisteurs louent des objets sans avoir besoin d'en déposer, et ainsi les membres perçoivent un rente.</li>
     </ul>
   </div>
 </div>
