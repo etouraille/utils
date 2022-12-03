@@ -19,6 +19,7 @@ export class CalendarComponent implements OnInit {
   @Input() userId: number = 0;
   @Input() _borrow: boolean = false;
   @Input() readOnly: boolean = false;
+  @Input() payment: boolean = false;
 
   constructor(public activeModal: NgbActiveModal) { }
 
@@ -57,7 +58,7 @@ export class CalendarComponent implements OnInit {
           let momentEndDate = moment(reservation.endDate);
           let momentDate = moment(date.date);
           if(momentStartDate.isSameOrBefore(momentDate, 'day') && momentEndDate.isSameOrAfter(momentDate, 'day')) {
-            if(!reservation.state) this.month[i][j].blocked = true;
+            if(!reservation.state || reservation.state == -2 || reservation.state === -1) this.month[i][j].blocked = true;
             if(reservation.state == 1) this.month[i][j].out = true;
             if(reservation.state == 2) this.month[i][j].back = true;
             this.month[i][j].email = reservation.owner.email;

@@ -15,11 +15,11 @@ export class ReservationService {
     private store: Store<{ login: any}>,
   ) { }
 
-  book(dates: any, thing: any) {
+  book(dates: any, thing: any, payment: boolean) {
     if(!dates.endDate) {
       dates.endDate = dates.startDate;
     }
-    dates = Object.assign(dates, { thing:  'api/things/' + thing.id });
+    dates = Object.assign(dates, { thing:  'api/things/' + thing.id, state: payment ? -2 : 0 });
 
     let observer  = {
       next: (reservation: any) => {

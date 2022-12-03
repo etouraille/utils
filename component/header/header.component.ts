@@ -6,6 +6,7 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {login, logout} from "../../actions/login-action";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StorageService} from "../../service/storage.service";
+import {available, unavailable} from "../../actions/payment-action";
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,7 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
     private store: Store<{logged: boolean}>,
     private router: Router,
     private service: StorageService,
+    private http: HttpClient,
   ) {
     super();
   }
@@ -34,9 +36,13 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
       this.email = data?.email;
       this.isMember = data?.roles?.includes('ROLE_MEMBER');
     }));
-
-
-
+    this.add(this.http.get('payment/front').subscribe((data: any) => {
+      if(data.available) {
+        this.store.dispatch(available());
+      } else {
+        this.store.dispatch(unavailable())
+      }
+    }))
   }
 
   logout() {
