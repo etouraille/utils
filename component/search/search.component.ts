@@ -3,6 +3,7 @@ import {FormControl} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import * as moment from 'moment';
+import {environment} from "../../../environments/environment";
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -21,6 +22,8 @@ export class SearchComponent implements OnInit {
   @Input() all: boolean = false;
 
   placeholder: string = 'Choisir un Objet';
+
+  cdn: string = environment.cdn;
   @Output() onChangeId: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private http: HttpClient  ) {
@@ -65,7 +68,7 @@ export class SearchComponent implements OnInit {
       .subscribe((value:any) => {
         if(value.length >= 1){
 
-          this.http.get('api/things?name=' + value + '&description=' + value)
+          this.http.get('api/things/search?name=' + value + '&description=' + value)
             .pipe(
               map((data:any ) => data['hydra:member']),
               map((data: any) => {
