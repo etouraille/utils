@@ -33,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
     // Clone the request and replace the original headers with
     // cloned headers, updated with the authorization.
     const authReq = req.clone({
-      url: req.url.match(/\/upload/) ? req.url : environment.api + req.url,
+      url: req.url.match(/\/upload/) || (req.method === 'DELETE' && req.url.match(/\/delete-picture/))? req.url : environment.api + req.url,
       headers: headers,
     });
 

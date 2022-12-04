@@ -9,6 +9,9 @@ import {
   FormGroup,
   NG_VALUE_ACCESSOR
 } from "@angular/forms";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../../environments/environment";
+import {ToastrModule, ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-pictures',
@@ -24,8 +27,11 @@ export class PicturesComponent extends SubscribeComponent implements OnInit, Con
 
   //form = this.fb.group({});
 
+  cdn: string = environment.cdn;
+
   constructor(
-    //private fb : FormBuilder
+    private http: HttpClient,
+    private toastR: ToastrService,
   ) {
     super()
   }
@@ -57,8 +63,23 @@ export class PicturesComponent extends SubscribeComponent implements OnInit, Con
     this.onChange(this._pictures);
   }
   removePicture(index: number): void {
-    this._pictures.splice(index, 1);
-    this.onChange(this._pictures);
+    let pic = this._pictures[index].picture;
+    this.add(this.http.delete(this.cdn + 'delete-picture/' + pic ).subscribe( {
+      next: (data: any) => {
+        if(data.success) {
+          this._pictures.splice(index, 1);
+          this.onChange(this._pictures);
+          this.toastR.success('Image effacée');
+        } else {
+          this.toastR.success('Echec de la suppression');
+        }
+      },
+      error: (error) => {
+        this.toastR.success('Echec de la suppression');
+      }
+    }))
+
+
   }
 
   pictureChange(event: any, i: number) {
