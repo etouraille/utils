@@ -4,12 +4,14 @@ import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import * as moment from 'moment';
 import {environment} from "../../../environments/environment";
+import {SubscribeComponent} from "../subscribe/subscribe.component";
+import {Store} from "@ngrx/store";
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent extends SubscribeComponent implements OnInit {
 
   myControl: FormControl = new FormControl<any>('');
   filteredOptions: any[] = [];
@@ -26,8 +28,13 @@ export class SearchComponent implements OnInit {
   cdn: string = environment.cdn;
   @Output() onChangeId: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor(private http: HttpClient  ) {
+  payment: boolean = false;
 
+  constructor(
+    private http: HttpClient,
+    private store: Store<{login: any}>
+  ) {
+    super();
   }
 
   isReserved(reservation: any) : boolean {
@@ -39,13 +46,22 @@ export class SearchComponent implements OnInit {
     let condition = !reservation.state;
     let condition2 = reservation.state === 1;
     let condition3 = reservation.state === 2;
+    let condition4 : boolean  = true;
+    let condition5 : boolean= true;
+    if(this.payment) {
+      condition4 = reservation.state == -2;
+      condition5 = reservation.state == -1;
+    } else if(this.payment && this.user) {
+      condition4 = reservation.state === -2 && reservation.owner.id !== this.user.id;
+      condition5 = reservation.state === -1 && reservation.owner.id !== this.user.id;
+    }
     if(this.user) {
       condition = !reservation.state && reservation.owner.id !== this.user.id;
       condition2 = reservation.state === 1 && reservation.owner.id !== this.user.id;
       condition3 = reservation.state === 2 && reservation.owner.id !== this.user.id;
     }
 
-    return (condition2 || condition || condition3 )
+    return (condition2 || condition || condition3 || condition4 || condition5 )
       && _now.isSameOrAfter(_startDate, 'day')
       && _now.isSameOrBefore(_endDate, 'day')
     ;
@@ -63,7 +79,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     // @ts-ignore
-    this.myControl.valueChanges
+    this.add(this.myControl.valueChanges
       // @ts-ignore
       .subscribe((value:any) => {
         if(value.length >= 1){
@@ -86,7 +102,10 @@ export class SearchComponent implements OnInit {
         else {
           return null;
         }
-      })
+      }));
+    this.add(this.store.select((data) => data.login.payment).subscribe((payment: boolean) => {
+      this.payment = payment;
+    }))
   }
 
   onSelected(event:any) {
