@@ -1,5 +1,4 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {GoogleLoginProvider, SocialAuthService} from "angularx-social-login";
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient} from "@angular/common/http";
 import {ToastrService} from "ngx-toastr";
@@ -17,7 +16,6 @@ import {environment} from "../../../environments/environment";
 export class GoogleSigninComponent extends SubscribeComponent implements OnInit {
 
   constructor(
-    private socialAuthService: SocialAuthService,
     private http: HttpClient,
     private toastR: ToastrService,
     private storage: StorageService,

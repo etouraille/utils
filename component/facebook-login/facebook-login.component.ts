@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 declare const FB : any
+declare const window: any;
 
 @Component({
   selector: 'app-facebook-login',
