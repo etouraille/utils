@@ -7,7 +7,7 @@ import {login, logout} from "../../actions/login-action";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StorageService} from "../../service/storage.service";
 import {available, unavailable} from "../../actions/payment-action";
-
+declare const FB : any
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -47,6 +47,7 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
 
   logout() {
     this.service.set('token', null);
+    FB.logout();
     if(this.router.url === '/') this.store.dispatch(logout());
     this.router.navigate(['/']);
   }
