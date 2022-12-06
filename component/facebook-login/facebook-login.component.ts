@@ -31,29 +31,18 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
   }
 
   login() {
-    FB.getLoginStatus((response:any) => {
+    FB.login((response: any) => {
       if (response.status === 'connected') {
-        FB.logout((response: any) => {
-          // this part just clears the $_SESSION var
-          // replace with your own code
-          FB.login((response: any) => {
-            console.log(response);
-            if (response.status === 'connected') {
-              this.add(this.http.post('facebook/signin', { token: response.authResponse.accessToken}).subscribe((data: any) => {
-                if(data.token) {
-                  this.storage.set('token', data.token);
-                  this.store.dispatch(user({ user: {id: data.id , email: data.email}}));
-                  this.toastR.success('Connexion réussie');
-                  this.router.navigate(['/']);
-                }
-              }, (error) => this.toastR.error('Echec de la connexion')))
-            }
-          }, { scope: 'public_profile,email', auth_type: 'rerequest'});
-
-        });
+        this.add(this.http.post('facebook/signin', { token: response.authResponse.accessToken}).subscribe((data: any) => {
+          if(data.token) {
+            this.storage.set('token', data.token);
+            this.store.dispatch(user({ user: {id: data.id , email: data.email}}));
+            this.toastR.success('Connexion réussie');
+            this.router.navigate(['/']);
+          }
+        }, (error) => this.toastR.error('Echec de la connexion')))
       }
-    })
-
+    }, { scope: 'public_profile,email', auth_type: 'rerequest'});
   }
 
   init() {
