@@ -17,10 +17,11 @@ export class FacebookLoginComponent implements OnInit {
 
   login() {
     FB.login(function(response: any) {
+      console.log(response);
       if (response.satus === 'connected') {
         console.log(response);
       }
-    }, {scope: 'public_profile,email'});
+    });
   }
 
   init() {
