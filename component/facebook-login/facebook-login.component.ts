@@ -31,6 +31,7 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
   }
 
   login() {
+    FB.logout();
     FB.login((response: any) => {
       console.log(response);
       if (response.status === 'connected') {
