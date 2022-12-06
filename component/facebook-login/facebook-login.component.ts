@@ -43,7 +43,7 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
           }
         }, (error) => this.toastR.error('Echec de la connexion')))
       }
-    }, { scope: 'email'});
+    }, { scope: 'public_profile,email'});
   }
 
   init() {
