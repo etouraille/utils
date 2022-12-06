@@ -1,4 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import {SubscribeComponent} from "../subscribe/subscribe.component";
+import {HttpClient} from "@angular/common/http";
+import {Route, Router} from "@angular/router";
+import {StorageService} from "../../service/storage.service";
+import {ToastrService} from "ngx-toastr";
+import {Store} from "@ngrx/store";
+import {user} from "../../actions/user-action";
 declare const FB : any
 declare const window: any;
 
@@ -7,19 +14,34 @@ declare const window: any;
   templateUrl: './facebook-login.component.html',
   styleUrls: ['./facebook-login.component.scss']
 })
-export class FacebookLoginComponent implements OnInit {
+export class FacebookLoginComponent extends SubscribeComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private storage: StorageService,
+    private toastR: ToastrService,
+    private store: Store<{ login: any}>
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.init();
   }
 
   login() {
-    FB.login(function(response: any) {
+    FB.login((response: any) => {
       console.log(response);
-      if (response.satus === 'connected') {
-        console.log(response);
+      if (response.status === 'connected') {
+        this.add(this.http.post('facebook/signin', { token: response.authResponse.accessToken}).subscribe((data: any) => {
+          if(data.token) {
+            this.storage.set('token', data.token);
+            this.store.dispatch(user({ user: {id: data.id , email: data.email}}));
+            this.toastR.success('Connexion réussie');
+            this.router.navigate(['/']);
+          }
+        }, (error) => this.toastR.error('Echec de la connexion')))
       }
     }, { scope: 'email'});
   }
