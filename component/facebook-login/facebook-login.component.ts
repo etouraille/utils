@@ -21,7 +21,7 @@ export class FacebookLoginComponent implements OnInit {
       if (response.satus === 'connected') {
         console.log(response);
       }
-    });
+    }, { scope: 'email'});
   }
 
   init() {
