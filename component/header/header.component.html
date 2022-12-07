@@ -20,6 +20,8 @@
         <a ngbDropdownItem   [routerLink]="['card']">Compléter une carte</a>
         <a *ngIf="isMember" ngbDropdownItem   [routerLink]="['coin']">Coin</a>
         <a *ngIf="isMember" ngbDropdownItem   [routerLink]="['add']">Proposez un objet</a>
+        <a ngbDropdownItem   [routerLink]="['settings']">Réglage</a>
+
         <a ngbDropdownItem   [routerLink]="['/']">Home</a>
         <a ngbDropdownItem  (click)="logout()">Déconnection</a>
       </div>
