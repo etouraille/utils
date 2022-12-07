@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient} from "@angular/common/http";
 import {Route, Router} from "@angular/router";
@@ -6,6 +6,8 @@ import {StorageService} from "../../service/storage.service";
 import {ToastrService} from "ngx-toastr";
 import {Store} from "@ngrx/store";
 import {user} from "../../actions/user-action";
+import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
+import {RoleComponent} from "../role/role.component";
 declare const FB : any
 declare const window: any;
 
@@ -16,12 +18,17 @@ declare const window: any;
 })
 export class FacebookLoginComponent extends SubscribeComponent implements OnInit {
 
+  @Input() setRole : boolean = false;
+
+  ref: NgbModalRef|null = null;
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private storage: StorageService,
     private toastR: ToastrService,
-    private store: Store<{ login: any}>
+    private store: Store<{ login: any}>,
+    private modalService: NgbModal,
   ) {
     super();
   }
@@ -31,18 +38,37 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
   }
 
   login() {
-    FB.login((response: any) => {
-      if (response.status === 'connected') {
-        this.add(this.http.post('facebook/signin', { token: response.authResponse.accessToken}).subscribe((data: any) => {
-          if(data.token) {
-            this.storage.set('token', data.token);
-            this.store.dispatch(user({ user: {id: data.id , email: data.email}}));
-            this.toastR.success('Connexion réussie');
-            this.router.navigate(['/']);
+    if(this.setRole) {
+      this.ref = this.modalService.open(RoleComponent);
+      this.ref.result.then((data: any) => {
+        let roles = [data.role];
+        FB.login((response: any) => {
+          if (response.status === 'connected') {
+            this.add(this.http.post('facebook/signin', {token: response.authResponse.accessToken, roles}).subscribe((data: any) => {
+              if (data.token) {
+                this.storage.set('token', data.token);
+                this.store.dispatch(user({user: {id: data.id, email: data.email}}));
+                this.toastR.success('Connexion réussie');
+                this.router.navigate(['/']);
+              }
+            }, (error) => this.toastR.error('Echec de la connexion')))
           }
-        }, (error) => this.toastR.error('Echec de la connexion')))
-      }
-    }, { scope: 'public_profile,email', auth_type: 'rerequest'});
+        }, {scope: 'public_profile,email', auth_type: 'rerequest'});
+      }, (reason) => console.log(reason));
+    } else {
+      FB.login((response: any) => {
+        if (response.status === 'connected') {
+          this.add(this.http.post('facebook/signin', {token: response.authResponse.accessToken}).subscribe((data: any) => {
+            if (data.token) {
+              this.storage.set('token', data.token);
+              this.store.dispatch(user({user: {id: data.id, email: data.email}}));
+              this.toastR.success('Connexion réussie');
+              this.router.navigate(['/']);
+            }
+          }, (error) => this.toastR.error('Echec de la connexion')))
+        }
+      }, {scope: 'public_profile,email', auth_type: 'rerequest'});
+    }
   }
 
   init() {
