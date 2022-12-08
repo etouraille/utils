@@ -25,8 +25,9 @@ export class AuthInterceptor implements HttpInterceptor {
       headers = req.headers.set('content-type', 'application/merge-patch+json');
     }
     if(-1 === this.routeService.get().findIndex(elem => {
-      let regexp = new RegExp(elem);
-      return !!(req.url.match(regexp))
+      let regexp = new RegExp(elem.path);
+      console.log(req.method);
+      return !!(req.url.match(regexp) && elem.methods.includes(req.method))
     })) {
       headers = headers.set('Authorization', authToken);
     }
