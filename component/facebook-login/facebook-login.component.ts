@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient} from "@angular/common/http";
 import {Route, Router} from "@angular/router";
@@ -29,6 +29,7 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
     private toastR: ToastrService,
     private store: Store<{ login: any}>,
     private modalService: NgbModal,
+    private zone: NgZone,
   ) {
     super();
   }
@@ -46,10 +47,12 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
           if (response.status === 'connected') {
             this.add(this.http.post('facebook/signin', {token: response.authResponse.accessToken, roles}).subscribe((data: any) => {
               if (data.token) {
-                this.storage.set('token', data.token);
-                this.store.dispatch(user({user: {id: data.id, email: data.email}}));
-                this.toastR.success('Connexion réussie');
-                this.router.navigate(['/']);
+                this.zone.run(() => {
+                  this.storage.set('token', data.token);
+                  this.store.dispatch(user({user: {id: data.id, email: data.email}}));
+                  this.toastR.success('Connexion réussie');
+                  this.router.navigate(['/']);
+                })
               }
             }, (error) => this.toastR.error('Echec de la connexion')))
           }
