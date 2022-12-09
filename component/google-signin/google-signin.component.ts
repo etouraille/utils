@@ -78,7 +78,7 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
   }
 
   _login(response: any, params: any) {
-    this.zone.run(() => {
+
       this.add(this.http.post('google/signin', {
         ...params,
         token: response.credential
@@ -93,19 +93,21 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
       }, (error: any) => {
         this.toastR.error('Echec de la connexion');
       }));
-    })
+
 
   }
 
   handleCredentialResponse(response: CredentialResponse ) {
-    if(this.setRole) {
-      this.ref = this.modalService.open(RoleComponent);
-      this.ref.result.then((data: any) => {
-        this._login(response, {roles: [data.role]});
-      }, reason => console.log(reason));
-    } else {
-      this._login(response, {});
-    }
+    this.zone.run(() => {
+      if (this.setRole) {
+        this.ref = this.modalService.open(RoleComponent);
+        this.ref.result.then((data: any) => {
+          this._login(response, {roles: [data.role]});
+        }, reason => console.log(reason));
+      } else {
+        this._login(response, {});
+      }
+    });
   }
 
 
