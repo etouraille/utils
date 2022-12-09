@@ -101,8 +101,8 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
     (<any>window)['googleSDKLoaded'] = () => {
       (<any>window)['gapi'].load('auth2', () => {
         console.log('loaded');
-        GoogleSigninComponent.auth2 = (<any>window)['gapi'].auth2.init({
-          client_id: environment.google,
+        GoogleSigninComponent.auth2 = (<any>window)['gapi'].client.init({
+          clientId: environment.google,
           cookiepolicy: 'single_host_origin',
           scope: 'email'
         });
