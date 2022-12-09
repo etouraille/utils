@@ -78,21 +78,22 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
   }
 
   _login(response: any, params: any) {
-    this.add(this.http.post('google/signin', {
-      ...params,
-      token: response.credential
-    }).subscribe((data: any) => {
-      if (data.token) {
-        this.zone.run(() => {
-          this.storage.set('token', data.token);
-          this.store.dispatch(login());
-          this.router.navigate(['/']);
-          this.toastR.success('Login réussi');
-        })
-      }
-    }, (error: any) => {
-      this.toastR.error('Echec de la connexion');
-    }));
+    this.zone.run(() => {
+      this.add(this.http.post('google/signin', {
+        ...params,
+        token: response.credential
+      }).subscribe((data: any) => {
+        if (data.token) {
+            this.storage.set('token', data.token);
+            this.store.dispatch(login());
+            this.router.navigate(['/']);
+            this.toastR.success('Login réussi');
+
+        }
+      }, (error: any) => {
+        this.toastR.error('Echec de la connexion');
+      }));
+    })
 
   }
 
