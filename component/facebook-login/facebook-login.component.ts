@@ -38,39 +38,37 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
     FacebookLoginComponent.init();
   }
 
+  _login(roles?: any) {
+    FB.login((response: any) => {
+      let object : any = {token: response.authResponse.accessToken};
+      if(roles) {
+        object['roles'] = roles;
+      }
+
+      if (response.status === 'connected') {
+        this.add(this.http.post('facebook/signin',object ).subscribe((data: any) => {
+          if (data.token) {
+            this.zone.run(() => {
+              this.storage.set('token', data.token);
+              this.store.dispatch(user({user: {id: data.id, email: data.email}}));
+              this.toastR.success('Connexion réussie');
+              this.router.navigate(['/']);
+            })
+          }
+        }, (error) => this.toastR.error('Echec de la connexion')))
+      }
+    }, {scope: 'public_profile,email', auth_type: 'rerequest'});
+  }
+
   login() {
     if(this.setRole) {
       this.ref = this.modalService.open(RoleComponent);
       this.ref.result.then((data: any) => {
         let roles = [data.role];
-        FB.login((response: any) => {
-          if (response.status === 'connected') {
-            this.add(this.http.post('facebook/signin', {token: response.authResponse.accessToken, roles}).subscribe((data: any) => {
-              if (data.token) {
-                this.zone.run(() => {
-                  this.storage.set('token', data.token);
-                  this.store.dispatch(user({user: {id: data.id, email: data.email}}));
-                  this.toastR.success('Connexion réussie');
-                  this.router.navigate(['/']);
-                })
-              }
-            }, (error) => this.toastR.error('Echec de la connexion')))
-          }
-        }, {scope: 'public_profile,email', auth_type: 'rerequest'});
+        this._login(roles)
       }, (reason) => console.log(reason));
     } else {
-      FB.login((response: any) => {
-        if (response.status === 'connected') {
-          this.add(this.http.post('facebook/signin', {token: response.authResponse.accessToken}).subscribe((data: any) => {
-            if (data.token) {
-              this.storage.set('token', data.token);
-              this.store.dispatch(user({user: {id: data.id, email: data.email}}));
-              this.toastR.success('Connexion réussie');
-              this.router.navigate(['/']);
-            }
-          }, (error) => this.toastR.error('Echec de la connexion')))
-        }
-      }, {scope: 'public_profile,email', auth_type: 'rerequest'});
+      this._login();
     }
   }
 

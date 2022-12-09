@@ -69,7 +69,6 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
   }
 
   _login(params: any) {
-    console.log(GoogleSigninComponent.auth2);
     GoogleSigninComponent.auth2.signIn().then((googleAuthUser: any) => {
       let profile = googleAuthUser.getBasicProfile();
       this.add(this.http.post('google/signin', {
@@ -88,8 +87,7 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
         this.toastR.error('Echec de la connexion');
       }));
     }, (error: any ) => {
-      console.log(error);
-      this.toastR.error(error)
+      this.toastR.error(error.error)
     });
 
   }
