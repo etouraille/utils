@@ -11,7 +11,7 @@ import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {RoleComponent} from "../role/role.component";
 //import * as  gapi  from 'gapi-script';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
-
+let option: any
 @Component({
   selector: 'app-google-signin',
   templateUrl: './google-signin.component.html',
@@ -35,7 +35,7 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
     super();
   }
 
-
+  options: any
 
   static auth: any;
 
@@ -61,7 +61,8 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
   signin() {
 
     // @ts-ignore
-    google.accounts.id.prompt((notification: PromptMomentNotification) => {
+    google.accounts.id.prompt(
+      (notification: PromptMomentNotification) => {
       console.log(notification);
     });
     /*
@@ -76,33 +77,34 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
     */
   }
 
-  _login(params: any) {
-    console.log(GoogleSigninComponent.auth);
-    GoogleSigninComponent.auth.signIn().then((googleAuthUser: any) => {
-      let profile = googleAuthUser.getBasicProfile();
-      this.add(this.http.post('google/signin', {
-        ...params,
-        token: googleAuthUser.getAuthResponse().id_token
-      }).subscribe((data: any) => {
-        if (data.token) {
-          this.zone.run(() => {
-            this.storage.set('token', data.token);
-            this.store.dispatch(login());
-            this.router.navigate(['/']);
-            this.toastR.success('Login réussi');
-          })
-        }
-      }, (error: any) => {
-        this.toastR.error('Echec de la connexion');
-      }));
-    }, (error: any ) => {
-      this.toastR.error(error.error)
-    });
+  _login(response: any, params: any) {
+    this.add(this.http.post('google/signin', {
+      ...params,
+      token: response.credential
+    }).subscribe((data: any) => {
+      if (data.token) {
+        this.zone.run(() => {
+          this.storage.set('token', data.token);
+          this.store.dispatch(login());
+          this.router.navigate(['/']);
+          this.toastR.success('Login réussi');
+        })
+      }
+    }, (error: any) => {
+      this.toastR.error('Echec de la connexion');
+    }));
 
   }
 
-  handleCredentialResponse(response: CredentialResponse) {
-    console.log( response );
+  handleCredentialResponse(response: CredentialResponse ) {
+    if(this.setRole) {
+      this.ref = this.modalService.open(RoleComponent);
+      this.ref.result.then((data: any) => {
+        this._login(response, {roles: [data.role]});
+      }, reason => console.log(reason));
+    } else {
+      this._login(response, {});
+    }
   }
 
 
@@ -117,9 +119,9 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
       GoogleSigninComponent.auth = google.accounts.id.initialize({
         // Ref: https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
         client_id: environment.google,
-        callback: this.handleCredentialResponse.bind(this), // Whatever function you want to trigger...
+        callback:  this.handleCredentialResponse.bind(this), // Whatever function you want to trigger...
         auto_select: true,
-        cancel_on_tap_outside: false
+        cancel_on_tap_outside: false,
       });
 
       console.log(GoogleSigninComponent.auth);
