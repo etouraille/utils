@@ -87,7 +87,10 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
       }, (error: any) => {
         this.toastR.error('Echec de la connexion');
       }));
-    }, (error: any ) => this.toastR.error(error));
+    }, (error: any ) => {
+      console.log(error);
+      this.toastR.error(error)
+    });
 
   }
 
