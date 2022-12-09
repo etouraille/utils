@@ -104,7 +104,7 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
         GoogleSigninComponent.auth2 = (<any>window)['gapi'].auth2.init({
           client_id: environment.google,
           cookiepolicy: 'single_host_origin',
-          scope: 'profile email'
+          scope: 'email'
         });
       });
     }
