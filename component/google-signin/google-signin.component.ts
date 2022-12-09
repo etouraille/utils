@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, ViewChild} from '@angular/core';
 import {SubscribeComponent} from "../subscribe/subscribe.component";
 import {HttpClient} from "@angular/common/http";
 import {ToastrService} from "ngx-toastr";
@@ -15,7 +15,7 @@ import {RoleComponent} from "../role/role.component";
   templateUrl: './google-signin.component.html',
   styleUrls: ['./google-signin.component.scss']
 })
-export class GoogleSigninComponent extends SubscribeComponent implements OnInit {
+export class GoogleSigninComponent extends SubscribeComponent implements OnInit, AfterViewInit {
 
   @Input() setRole : boolean = false;
 
@@ -28,13 +28,14 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit 
     private router: Router,
     private store: Store<{ login: any}>,
     private modalService: NgbModal,
+    private zone: NgZone,
   ) {
     super();
   }
 
 
 
-  auth2: any;
+  static auth2: any;
 
   @ViewChild('loginRef', {static: true }) loginElement!: ElementRef;
 
@@ -46,18 +47,14 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit 
   --------------------------------------------*/
   ngOnInit() {
 
+
+  }
+
+  ngAfterViewInit() {
+
     this.googleAuthSDK();
   }
 
-  /**
-   * Write code on Method
-   *
-   * @return response()
-   */
-  _callLoginButton() {
-
-
-  }
 
   signin() {
       if(this.setRole) {
@@ -72,17 +69,20 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit 
   }
 
   _login(params: any) {
-    this.auth2.signIn().then((googleAuthUser: any) => {
+    console.log(GoogleSigninComponent.auth2);
+    GoogleSigninComponent.auth2.signIn().then((googleAuthUser: any) => {
       let profile = googleAuthUser.getBasicProfile();
       this.add(this.http.post('google/signin', {
         ...params,
         token: googleAuthUser.getAuthResponse().id_token
       }).subscribe((data: any) => {
         if (data.token) {
-          this.storage.set('token', data.token);
-          this.store.dispatch(login());
-          this.router.navigate(['/']);
-          this.toastR.success('Login réussi');
+          this.zone.run(() => {
+            this.storage.set('token', data.token);
+            this.store.dispatch(login());
+            this.router.navigate(['/']);
+            this.toastR.success('Login réussi');
+          })
         }
       }, (error: any) => {
         this.toastR.error('Echec de la connexion');
@@ -92,16 +92,13 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit 
   }
 
 
-  /**
-   * Write code on Method
-   *
-   * @return response()
-   */
+
   googleAuthSDK() {
 
     (<any>window)['googleSDKLoaded'] = () => {
       (<any>window)['gapi'].load('auth2', () => {
-        this.auth2 = (<any>window)['gapi'].auth2.init({
+        console.log('loaded');
+        GoogleSigninComponent.auth2 = (<any>window)['gapi'].auth2.init({
           client_id: environment.google,
           cookiepolicy: 'single_host_origin',
           scope: 'profile email'

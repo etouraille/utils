@@ -34,7 +34,7 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
   }
 
   ngOnInit(): void {
-    this.init();
+    FacebookLoginComponent.init();
   }
 
   login() {
@@ -71,7 +71,7 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
     }
   }
 
-  init() {
+  static init() {
     window.fbAsyncInit = function() {
       FB.init({
         appId      : '1867394790282222',
@@ -91,5 +91,6 @@ export class FacebookLoginComponent extends SubscribeComponent implements OnInit
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
   }
+
 
 }
