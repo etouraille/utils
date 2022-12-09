@@ -9,6 +9,8 @@ import {login} from "../../actions/login-action";
 import {environment} from "../../../environments/environment";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {RoleComponent} from "../role/role.component";
+//import * as  gapi  from 'gapi-script';
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 
 @Component({
   selector: 'app-google-signin',
@@ -35,7 +37,7 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
 
 
 
-  static auth2: any;
+  static auth: any;
 
   @ViewChild('loginRef', {static: true }) loginElement!: ElementRef;
 
@@ -57,6 +59,12 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
 
 
   signin() {
+
+    // @ts-ignore
+    google.accounts.id.prompt((notification: PromptMomentNotification) => {
+      console.log(notification);
+    });
+    /*
       if(this.setRole) {
         this.ref = this.modalService.open(RoleComponent);
         this.ref.result.then((data: any) => {
@@ -65,11 +73,12 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
       } else {
         this._login({});
       }
-
+    */
   }
 
   _login(params: any) {
-    GoogleSigninComponent.auth2.signIn().then((googleAuthUser: any) => {
+    console.log(GoogleSigninComponent.auth);
+    GoogleSigninComponent.auth.signIn().then((googleAuthUser: any) => {
       let profile = googleAuthUser.getBasicProfile();
       this.add(this.http.post('google/signin', {
         ...params,
@@ -92,27 +101,38 @@ export class GoogleSigninComponent extends SubscribeComponent implements OnInit,
 
   }
 
+  handleCredentialResponse(response: CredentialResponse) {
+    console.log( response );
+  }
+
 
 
   googleAuthSDK() {
 
-    (<any>window)['googleSDKLoaded'] = () => {
-      (<any>window)['gapi'].load('auth2', () => {
-        console.log('loaded');
-        GoogleSigninComponent.auth2 = (<any>window)['gapi'].auth2.init({
-          clientId: environment.google,
-          cookiepolicy: 'single_host_origin',
-          scope: 'email'
-        });
+    // @ts-ignore
+    window.onGoogleLibraryLoad = () => {
+      console.log('Google\'s One-tap sign in script loaded!');
+
+      // @ts-ignore
+      GoogleSigninComponent.auth = google.accounts.id.initialize({
+        // Ref: https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
+        client_id: environment.google,
+        callback: this.handleCredentialResponse.bind(this), // Whatever function you want to trigger...
+        auto_select: true,
+        cancel_on_tap_outside: false
       });
-    }
+
+      console.log(GoogleSigninComponent.auth);
+
+    };
+
 
     (function(d, s, id){
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) {return;}
       js = d.createElement('script');
       js.id = id;
-      js.src = "https://apis.google.com/js/platform.js?onload=googleSDKLoaded";
+      js.src = "https://accounts.google.com/gsi/client?onload=googleSDKLoaded";
       fjs?.parentNode?.insertBefore(js, fjs);
     }(document, 'script', 'google-jssdk'));
 
