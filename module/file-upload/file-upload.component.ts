@@ -48,7 +48,7 @@ export class FileUploadComponent extends SubscribeComponent implements OnInit, C
         this._file = obj.picture;
         this.image = environment.cdn + obj.picture;
         this.shortLink = obj.picture;
-      }, 100);
+      }, 500);
     }
   }
 
