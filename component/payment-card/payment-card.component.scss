@@ -328,3 +328,8 @@ input {
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
+@media(screen and max-width: 360px) {
+  .creditcard svg#cardfront, .creditcard svg#cardback {
+    width: 280px;
+  }
+}
