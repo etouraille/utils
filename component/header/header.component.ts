@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {selectFeatureLogged} from "../../selectors/logged-selector";
 import {SubscribeComponent} from "../subscribe/subscribe.component";
@@ -19,6 +19,8 @@ export class HeaderComponent extends SubscribeComponent implements OnInit {
   logged: boolean = true;
   email: string = '';
   isMember: boolean = false;
+
+  @Input() large: boolean = false;
 
   constructor(
     private store: Store<{logged: boolean}>,

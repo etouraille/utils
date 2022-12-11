@@ -26,7 +26,6 @@ export class AuthInterceptor implements HttpInterceptor {
     }
     if(-1 === this.routeService.get().findIndex(elem => {
       let regexp = new RegExp(elem.path);
-      console.log(req.method);
       return !!(req.url.match(regexp) && (elem.methods ? elem.methods.includes(req.method) : true))
     })) {
       headers = headers.set('Authorization', authToken);
